@@ -1,7 +1,5 @@
 package com.example.tsmessenger;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -11,7 +9,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Intent;
@@ -38,8 +35,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 public class SignUpActivity extends AppCompatActivity {
     ActivitySignUpBinding binding;
@@ -94,9 +90,7 @@ public class SignUpActivity extends AppCompatActivity {
                 ClipData.Item item = data.getClipData().getItemAt(0);
                 selectedImageUri = item.getUri();
                 binding.addProfile.setImageURI(selectedImageUri);
-                System.out.println(selectedImageUri + "data  1");
-                System.out.println(data.getClipData().toString() + "data  2");
-                System.out.println(data.getClipData().getDescription().toString() + "data 3");
+
             }
         });
     }
@@ -146,8 +140,6 @@ public class SignUpActivity extends AppCompatActivity {
 
             dialog.show();
 
-//            Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//             pickGalleryPictureLauncher.launch(galleryIntent);
 
         });
         binding.btnSignUp.setOnClickListener(v -> {
@@ -155,7 +147,6 @@ public class SignUpActivity extends AppCompatActivity {
             String enteredEmail = binding.emailTextSignUp.getText().toString();
             String enteredPassword = binding.passwordText.getText().toString();
             String confirmPassword = binding.confirmPasswordText.getText().toString();
-            System.out.println(enteredEmail + "email value");
             if (TextUtils.isEmpty(enteredUsername)) {
                 Toast.makeText(this, "Username can not be empty", Toast.LENGTH_SHORT).show();
 
@@ -164,7 +155,6 @@ public class SignUpActivity extends AppCompatActivity {
             } else if (enteredPassword.isEmpty() || enteredPassword.length() < 8) {
                 Toast.makeText(this, "Password must be at least 8 digit", Toast.LENGTH_SHORT).show();
             } else if (!confirmPassword.equals(enteredPassword)) {
-                System.out.println(confirmPassword + " " + enteredPassword);
                 Toast.makeText(this, "Password do not match.", Toast.LENGTH_SHORT).show();
             } else if (!enteredEmail.matches("^(.+)@(\\S+)$")) {
                 Toast.makeText(this, "Enter valid email", Toast.LENGTH_SHORT).show();
@@ -188,7 +178,6 @@ public class SignUpActivity extends AppCompatActivity {
                                         imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                             @Override
                                             public void onSuccess(Uri uri) {
-                                                System.out.println(uri.toString() + "data download uri");
                                                 imageUri = uri.toString();
                                                 User user = new User(id, enteredUsername, enteredEmail, enteredPassword, "hi", "", imageUri);
                                                 databaseReference.setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {

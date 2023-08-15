@@ -23,15 +23,14 @@ import java.util.Date;
 
 public class ChatActivity extends AppCompatActivity {
     ActivityChatBinding binding;
-    String  receiverUid,receiverName,SenderUID;
+    String receiverUid, receiverName, SenderUID;
     FirebaseDatabase database;
     FirebaseAuth firebaseAuth;
-
-    String senderRoom,receiverRoom,profileImageUrl;
-
+    String senderRoom, receiverRoom, profileImageUrl;
     RecyclerView message_recycler_view;
     ArrayList<MessageModel> messagesArrayList;
     MessagesAdapter messagesAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,28 +51,23 @@ public class ChatActivity extends AppCompatActivity {
         linearLayoutManager.setStackFromEnd(true);
 
         message_recycler_view.setLayoutManager(linearLayoutManager);
-        messagesAdapter = new MessagesAdapter(ChatActivity.this,messagesArrayList,profileImageUrl);
+        messagesAdapter = new MessagesAdapter(ChatActivity.this, messagesArrayList, profileImageUrl);
         message_recycler_view.setAdapter(messagesAdapter);
-//        binding.receiverNameText.setText(""+receiverName);
 
-        SenderUID =  firebaseAuth.getUid();
-        System.out.println(SenderUID+"senderUID");
-
-        senderRoom = SenderUID+receiverUid;
-        receiverRoom = receiverUid+SenderUID;
-
+        SenderUID = firebaseAuth.getUid();
+        senderRoom = SenderUID + receiverUid;
+        receiverRoom = receiverUid + SenderUID;
 
 
         DatabaseReference reference = database.getReference().child("user").child(firebaseAuth.getUid());
-        DatabaseReference  chatReference = database.getReference().child("chats").child(senderRoom).child("messages");
+        DatabaseReference chatReference = database.getReference().child("chats").child(senderRoom).child("messages");
 
         chatReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 messagesArrayList.clear();
-                for (DataSnapshot dataSnapshot:snapshot.getChildren()){
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     MessageModel messages = dataSnapshot.getValue(MessageModel.class);
-                    System.out.println(messages.getSenderId()+"senderid here");
                     messagesArrayList.add(messages);
                 }
                 messagesAdapter.notifyDataSetChanged();
@@ -98,16 +92,15 @@ public class ChatActivity extends AppCompatActivity {
         });
         binding.sendButton.setOnClickListener(v -> {
             String message = binding.editTextMessage.getText().toString();
-            if (message.isEmpty()){
+            if (message.isEmpty()) {
                 Toast.makeText(ChatActivity.this, "Enter The Message First", Toast.LENGTH_SHORT).show();
                 return;
             }
             binding.editTextMessage.setText("");
             Date date = new Date();
-            MessageModel messagesModel = new MessageModel(message,SenderUID,date.getTime());
+            MessageModel messagesModel = new MessageModel(message, SenderUID, date.getTime());
 
-            database=FirebaseDatabase.getInstance();
-
+            database = FirebaseDatabase.getInstance();
             database.getReference().child("chats")
                     .child(senderRoom)
                     .child("messages")
