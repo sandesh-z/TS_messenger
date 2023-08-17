@@ -15,7 +15,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,6 +86,7 @@ public class SignUpActivity extends AppCompatActivity {
         pickGalleryPictureLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result != null) {
                 Intent data = result.getData();
+                if(data==null) return;
                 ClipData.Item item = data.getClipData().getItemAt(0);
                 selectedImageUri = item.getUri();
                 binding.addProfile.setImageURI(selectedImageUri);
@@ -133,7 +133,10 @@ public class SignUpActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     isFromGallery = true;
                     dialog.dismiss();
-                    Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    Intent galleryIntent = new Intent();
+                    galleryIntent.setType("image/*");
+                    galleryIntent.setAction(Intent.ACTION_PICK);
+
                     pickGalleryPictureLauncher.launch(galleryIntent);
                 }
             });
